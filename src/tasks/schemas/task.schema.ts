@@ -1,37 +1,27 @@
 import * as mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Task } from '../tasks';
 
-export const TaskSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: [true, 'Task precisa haver um titulo'],
-      validate: {
-        validator: (value: string) => typeof value === 'string',
-        message: 'Titulo não está em formato de string',
-      },
-    },
-    description: {
-      type: String,
-      validate: {
-        validator: (value: string) => typeof value === 'string',
-        message: 'Descrição não está em formato de string',
-      },
-      required: false,
-    },
-    dueDate: {
-      type: String,
-      validate: {
-        validator: (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value), // regex pra validar o formato da data
-        message: 'Data precisa vir no formato YYYY-MM-DD',
-      },
-      required: false,
-    },
-    isCompleted: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    timestamps: true,
-  },
-);
+export type TaskDocument = mongoose.HydratedDocument<Task>;
+
+@Schema()
+export class TaskNest {
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  id: mongoose.Types.ObjectId;
+
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ required: false })
+  description: string;
+  @Prop({ type: Date, required: true, default: Date.now })
+  createdAt: Date;
+  @Prop({ type: Date, required: true, default: Date.now })
+  updatedAt: Date;
+  @Prop({ type: Date, required: false })
+  dueDate: string;
+  @Prop({ type: Boolean, default: false })
+  isCompleted: Boolean;
+}
+
+export const TaskSchema = SchemaFactory.createForClass(TaskNest);
