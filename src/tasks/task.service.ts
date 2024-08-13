@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task } from './tasks';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TaskService {
@@ -23,8 +24,8 @@ export class TaskService {
     return await createdTask.save();
   }
 
-  async update(id: string, task: Partial<Task>): Promise<Task | null> {
-    await this.taskModel.updateOne({ _id: id }, task).exec();
+  async update(id: string, UpdateTaskDto: UpdateTaskDto): Promise<Task | null> {
+    await this.taskModel.updateOne({ _id: id }, UpdateTaskDto).exec();
     return this.getById(id);
   }
 
